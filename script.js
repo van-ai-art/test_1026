@@ -268,8 +268,8 @@ document.getElementById('clear-history').addEventListener('click', () => {
 
 // 키보드 입력 지원
 window.addEventListener('keydown', (e) => {
-  // 환율 입력창에 포커스되어 있을 때는 계산기 단축키 무시
-  if (document.activeElement && ['INPUT', 'SELECT'].includes(document.activeElement.tagName)) {
+  // 입력창에 포커스되어 있을 때는 계산기 단축키 무시
+  if (document.activeElement && ['INPUT', 'SELECT', 'TEXTAREA'].includes(document.activeElement.tagName)) {
     return;
   }
 
@@ -471,3 +471,243 @@ themeToggleBtn.addEventListener('click', () => {
 populateCurrencySelects();
 updateCalcDisplay();
 fetchExchangeRates();
+
+// ---------------- 방문자 댓글 & 관리자 삭제 기능 ----------------
+const ADMIN_PASSWORD_DEFAULT = '1234';
+const COMMENTS_STORAGE_KEY = 'calc-comments-v1';
+
+const commentState = {
+  isAdmin: false,
+  comments: []
+};
+
+const commentForm = document.getElementById('comment-form');
+const commentAuthorInput = document.getElementById('comment-author');
+const commentPasswordInput = document.getElementById('comment-password');
+const commentContentInput = document.getElementById('comment-content');
+const commentListEl = document.getElementById('comment-list');
+const commentCountEl = document.getElementById('comment-count');
+
+const adminToggleBtn = document.getElementById('admin-toggle-btn');
+const adminBadge = document.getElementById('admin-badge');
+const adminClearAllBtn = document.getElementById('admin-clear-all');
+const adminAuthBox = document.getElementById('admin-auth-box');
+const adminPwInput = document.getElementById('admin-pw-input');
+const adminLoginConfirmBtn = document.getElementById('admin-login-confirm');
+const adminLoginCancelBtn = document.getElementById('admin-login-cancel');
+const adminAuthMsg = document.getElementById('admin-auth-msg');
+
+function loadComments() {
+  try {
+    const raw = localStorage.getItem(COMMENTS_STORAGE_KEY);
+    if (raw) {
+      commentState.comments = JSON.parse(raw);
+    } else {
+      commentState.comments = [
+        {
+          id: 'welcome-1',
+          author: '관리자',
+          content: '스마트 계산기 & 실시간 환율 웹앱에 오신 것을 환영합니다! 자유롭게 댓글을 남겨보세요.',
+          password: '',
+          createdAt: new Date().toLocaleString('ko-KR', {
+            year: 'numeric',
+            month: '2-digit',
+            day: '2-digit',
+            hour: '2-digit',
+            minute: '2-digit'
+          })
+        }
+      ];
+      saveComments();
+    }
+  } catch (e) {
+    commentState.comments = [];
+  }
+}
+
+function saveComments() {
+  localStorage.setItem(COMMENTS_STORAGE_KEY, JSON.stringify(commentState.comments));
+}
+
+function renderComments() {
+  commentCountEl.textContent = String(commentState.comments.length);
+  commentListEl.innerHTML = '';
+
+  if (commentState.comments.length === 0) {
+    const emptyLi = document.createElement('li');
+    emptyLi.className = 'empty-comments';
+    emptyLi.textContent = '아직 등록된 댓글이 없습니다. 첫 번째 댓글을 남겨보세요!';
+    commentListEl.appendChild(emptyLi);
+    return;
+  }
+
+  commentState.comments.forEach((item) => {
+    const li = document.createElement('li');
+    li.className = 'comment-item';
+
+    const headerDiv = document.createElement('div');
+    headerDiv.className = 'comment-item-header';
+
+    const metaDiv = document.createElement('div');
+    metaDiv.className = 'comment-meta';
+
+    const authorSpan = document.createElement('span');
+    authorSpan.className = 'comment-author-name';
+    authorSpan.textContent = item.author;
+
+    const dateSpan = document.createElement('span');
+    dateSpan.className = 'comment-date';
+    dateSpan.textContent = item.createdAt;
+
+    metaDiv.appendChild(authorSpan);
+    metaDiv.appendChild(dateSpan);
+
+    const deleteBtn = document.createElement('button');
+    deleteBtn.type = 'button';
+    deleteBtn.className = `comment-delete-btn ${commentState.isAdmin ? 'admin-mode-btn' : ''}`;
+    deleteBtn.textContent = commentState.isAdmin ? '🗑️ 관리자 삭제' : '삭제';
+
+    deleteBtn.addEventListener('click', () => {
+      handleDeleteComment(item.id);
+    });
+
+    headerDiv.appendChild(metaDiv);
+    headerDiv.appendChild(deleteBtn);
+
+    const bodyP = document.createElement('p');
+    bodyP.className = 'comment-body-text';
+    bodyP.textContent = item.content;
+
+    li.appendChild(headerDiv);
+    li.appendChild(bodyP);
+    commentListEl.appendChild(li);
+  });
+}
+
+function handleDeleteComment(commentId) {
+  const target = commentState.comments.find((c) => c.id === commentId);
+  if (!target) return;
+
+  // 관리자 모드일 경우 비밀번호 확인 없이 즉시 삭제 가능
+  if (commentState.isAdmin) {
+    if (confirm(`[관리자 권한] '${target.author}' 님의 댓글을 삭제하시겠습니까?`)) {
+      commentState.comments = commentState.comments.filter((c) => c.id !== commentId);
+      saveComments();
+      renderComments();
+    }
+    return;
+  }
+
+  // 일반 사용자일 경우: 댓글 비밀번호 또는 관리자 비밀번호로 삭제 가능
+  const inputPw = prompt('댓글 삭제를 위해 댓글 비밀번호(또는 관리자 비밀번호)를 입력해 주세요.');
+  if (inputPw === null) return;
+
+  if (inputPw === ADMIN_PASSWORD_DEFAULT || (target.password && inputPw === target.password)) {
+    commentState.comments = commentState.comments.filter((c) => c.id !== commentId);
+    saveComments();
+    renderComments();
+  } else {
+    alert('비밀번호가 일치하지 않습니다. (관리자는 우측 상단 관리자 로그인 후 즉시 삭제할 수 있습니다.)');
+  }
+}
+
+function updateAdminUI() {
+  if (commentState.isAdmin) {
+    adminBadge.classList.remove('hidden');
+    adminClearAllBtn.classList.remove('hidden');
+    adminToggleBtn.textContent = '🔓 관리자 로그아웃';
+    adminAuthBox.classList.add('hidden');
+  } else {
+    adminBadge.classList.add('hidden');
+    adminClearAllBtn.classList.add('hidden');
+    adminToggleBtn.textContent = '🔒 관리자 로그인';
+  }
+  renderComments();
+}
+
+adminToggleBtn.addEventListener('click', () => {
+  if (commentState.isAdmin) {
+    commentState.isAdmin = false;
+    updateAdminUI();
+    return;
+  }
+  adminAuthBox.classList.toggle('hidden');
+  if (!adminAuthBox.classList.contains('hidden')) {
+    adminPwInput.value = '';
+    adminPwInput.focus();
+  }
+});
+
+function tryAdminLogin() {
+  const pw = adminPwInput.value.trim();
+  if (pw === ADMIN_PASSWORD_DEFAULT) {
+    commentState.isAdmin = true;
+    adminPwInput.value = '';
+    updateAdminUI();
+  } else {
+    adminAuthMsg.innerHTML = '❌ <strong style="color:#ef4444;">비밀번호가 올바르지 않습니다. (초기 비밀번호: 1234)</strong>';
+    adminPwInput.select();
+  }
+}
+
+adminLoginConfirmBtn.addEventListener('click', tryAdminLogin);
+
+adminPwInput.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') {
+    e.preventDefault();
+    tryAdminLogin();
+  }
+});
+
+adminLoginCancelBtn.addEventListener('click', () => {
+  adminAuthBox.classList.add('hidden');
+});
+
+adminClearAllBtn.addEventListener('click', () => {
+  if (!commentState.isAdmin) return;
+  if (commentState.comments.length === 0) {
+    alert('삭제할 댓글이 없습니다.');
+    return;
+  }
+  if (confirm('[관리자 권한] 등록된 모든 댓글을 삭제하시겠습니까?')) {
+    commentState.comments = [];
+    saveComments();
+    renderComments();
+  }
+});
+
+commentForm.addEventListener('submit', (e) => {
+  e.preventDefault();
+  const author = commentAuthorInput.value.trim();
+  const content = commentContentInput.value.trim();
+  const password = commentPasswordInput.value.trim();
+
+  if (!author || !content) return;
+
+  const nowStr = new Date().toLocaleString('ko-KR', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+    hour: '2-digit',
+    minute: '2-digit'
+  });
+
+  const newComment = {
+    id: 'c-' + Date.now() + '-' + Math.random().toString(36).slice(2, 7),
+    author,
+    content,
+    password,
+    createdAt: nowStr
+  };
+
+  commentState.comments.unshift(newComment);
+  saveComments();
+  renderComments();
+
+  commentContentInput.value = '';
+  commentPasswordInput.value = '';
+});
+
+loadComments();
+renderComments();
+

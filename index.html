@@ -125,6 +125,70 @@
         </div>
       </section>
     </main>
+
+    <!-- 하단: 댓글 섹션 -->
+    <section class="card comment-section">
+      <div class="section-header comment-header">
+        <div class="comment-title-wrap">
+          <h2>💬 방문자 댓글</h2>
+          <span id="comment-count" class="comment-count-badge">0</span>
+        </div>
+        <div class="admin-controls">
+          <span id="admin-badge" class="admin-badge hidden">🛡️ 관리자 모드 활성</span>
+          <button id="admin-clear-all" class="danger-outline-btn hidden" title="모든 댓글 일괄 삭제">
+            전체 삭제
+          </button>
+          <button id="admin-toggle-btn" class="admin-btn">
+            🔒 관리자 로그인
+          </button>
+        </div>
+      </div>
+
+      <!-- 관리자 로그인 모달/패널 -->
+      <div id="admin-auth-box" class="admin-auth-box hidden">
+        <div class="admin-auth-inner">
+          <label for="admin-pw-input">관리자 비밀번호</label>
+          <input type="password" id="admin-pw-input" placeholder="관리자 비밀번호 입력 (초기: 1234)" />
+          <button id="admin-login-confirm" class="primary-btn sm">확인</button>
+          <button id="admin-login-cancel" class="text-btn">취소</button>
+        </div>
+        <p id="admin-auth-msg" class="admin-auth-msg">💡 초기 관리자 비밀번호는 <strong>1234</strong> 입니다.</p>
+      </div>
+
+      <!-- 댓글 입력 폼 -->
+      <form id="comment-form" class="comment-form">
+        <div class="comment-form-top">
+          <input
+            type="text"
+            id="comment-author"
+            placeholder="닉네임 (최대 15자)"
+            maxlength="15"
+            required
+          />
+          <input
+            type="password"
+            id="comment-password"
+            placeholder="댓글 비밀번호 (선택, 본인 삭제용)"
+            maxlength="20"
+          />
+        </div>
+        <div class="comment-form-body">
+          <textarea
+            id="comment-content"
+            rows="3"
+            placeholder="자유롭게 의견을 남겨주세요. (최대 300자)"
+            maxlength="300"
+            required
+          ></textarea>
+          <button type="submit" class="submit-comment-btn">댓글 등록</button>
+        </div>
+      </form>
+
+      <!-- 댓글 목록 -->
+      <ul id="comment-list" class="comment-list">
+        <!-- JS에서 렌더링 -->
+      </ul>
+    </section>
   </div>
 
   <script src="script.js"></script>
