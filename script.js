@@ -435,9 +435,30 @@ document.getElementById('refresh-rates').addEventListener('click', () => {
   fetchExchangeRates();
 });
 
+// ---------------- 상단 뷰 탭 전환 (계산기 / 환율 / 계산기 + 환율) ----------------
+const mainGridEl = document.getElementById('main-grid');
+const viewTabBtns = document.querySelectorAll('.view-tab-btn');
+
+function setViewMode(viewMode) {
+  if (!mainGridEl) return;
+  mainGridEl.setAttribute('data-view', viewMode);
+  viewTabBtns.forEach((btn) => {
+    btn.classList.toggle('active', btn.dataset.view === viewMode);
+  });
+}
+
+viewTabBtns.forEach((btn) => {
+  btn.addEventListener('click', () => {
+    setViewMode(btn.dataset.view);
+  });
+});
+
 document.getElementById('send-to-converter').addEventListener('click', () => {
   const val = parseFloat(calcState.currentInput);
   if (!isNaN(val) && val >= 0) {
+    if (mainGridEl && mainGridEl.getAttribute('data-view') === 'calc') {
+      setViewMode('both');
+    }
     fromAmountInput.value = val;
     updateConversion();
     fromAmountInput.focus();

@@ -20,9 +20,22 @@
       </div>
     </header>
 
-    <main class="main-grid">
+    <!-- 상단 뷰 선택 메뉴 -->
+    <nav class="view-tabs" aria-label="화면 모드 선택">
+      <button type="button" class="view-tab-btn active" data-view="calc">
+        🧮 계산기
+      </button>
+      <button type="button" class="view-tab-btn" data-view="exchange">
+        💱 환율
+      </button>
+      <button type="button" class="view-tab-btn" data-view="both">
+        ⚡ 계산기 + 환율
+      </button>
+    </nav>
+
+    <main id="main-grid" class="main-grid" data-view="calc">
       <!-- 왼쪽: 계산기 섹션 -->
-      <section class="card calculator-section">
+      <section id="calculator-section" class="card calculator-section">
         <div class="section-header">
           <h2>계산기</h2>
           <button id="send-to-converter" class="small-action-btn" title="현재 값을 환율 변환 금액으로 복사">
@@ -74,7 +87,7 @@
       </section>
 
       <!-- 오른쪽: 환율 변환 및 실시간 환율표 섹션 -->
-      <section class="card exchange-section">
+      <section id="exchange-section" class="card exchange-section">
         <div class="section-header">
           <h2>환율 변환 &amp; 실시간 환율</h2>
           <div class="rate-status">
