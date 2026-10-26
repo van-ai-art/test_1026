@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>스마트 계산기 & 실시간 환율</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="app-container">
+    <header class="app-header">
+      <div class="title-group">
+        <h1>스마트 계산기 &amp; 환율</h1>
+        <p class="subtitle">사칙연산 계산기와 실시간 환율 조회·변환</p>
+      </div>
+      <div class="header-actions">
+        <button id="theme-toggle" class="icon-btn" title="테마 전환" aria-label="테마 전환">
+          🌙
+        </button>
+      </div>
+    </header>
+
+    <main class="main-grid">
+      <!-- 왼쪽: 계산기 섹션 -->
+      <section class="card calculator-section">
+        <div class="section-header">
+          <h2>계산기</h2>
+          <button id="send-to-converter" class="small-action-btn" title="현재 값을 환율 변환 금액으로 복사">
+            환율 변환기로 보내기 →
+          </button>
+        </div>
+
+        <div class="calc-display">
+          <div id="calc-expression" class="calc-expression"></div>
+          <div id="calc-result" class="calc-result">0</div>
+        </div>
+
+        <div class="calc-keypad">
+          <button class="key-btn fn-key" data-action="clear">AC</button>
+          <button class="key-btn fn-key" data-action="backspace">⌫</button>
+          <button class="key-btn fn-key" data-action="percent">%</button>
+          <button class="key-btn op-key" data-value="/">÷</button>
+
+          <button class="key-btn num-key" data-value="7">7</button>
+          <button class="key-btn num-key" data-value="8">8</button>
+          <button class="key-btn num-key" data-value="9">9</button>
+          <button class="key-btn op-key" data-value="*">×</button>
+
+          <button class="key-btn num-key" data-value="4">4</button>
+          <button class="key-btn num-key" data-value="5">5</button>
+          <button class="key-btn num-key" data-value="6">6</button>
+          <button class="key-btn op-key" data-value="-">−</button>
+
+          <button class="key-btn num-key" data-value="1">1</button>
+          <button class="key-btn num-key" data-value="2">2</button>
+          <button class="key-btn num-key" data-value="3">3</button>
+          <button class="key-btn op-key" data-value="+">+</button>
+
+          <button class="key-btn num-key" data-action="sign">±</button>
+          <button class="key-btn num-key" data-value="0">0</button>
+          <button class="key-btn num-key" data-value=".">.</button>
+          <button class="key-btn eq-key" data-action="equals">=</button>
+        </div>
+
+        <div class="calc-history">
+          <div class="history-header">
+            <span>계산 기록</span>
+            <button id="clear-history" class="text-btn">기록 삭제</button>
+          </div>
+          <ul id="history-list" class="history-list">
+            <li class="empty-history">아직 계산 기록이 없습니다.</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- 오른쪽: 환율 변환 및 실시간 환율표 섹션 -->
+      <section class="card exchange-section">
+        <div class="section-header">
+          <h2>환율 변환 &amp; 실시간 환율</h2>
+          <div class="rate-status">
+            <span id="rate-updated-at" class="status-badge">불러오는 중...</span>
+            <button id="refresh-rates" class="icon-btn sm" title="환율 새로고침">↻</button>
+          </div>
+        </div>
+
+        <!-- 통화 변환기 -->
+        <div class="converter-box">
+          <div class="currency-row">
+            <div class="currency-select-wrap">
+              <label for="from-currency">보내는 통화</label>
+              <select id="from-currency"></select>
+            </div>
+            <div class="currency-input-wrap">
+              <label for="from-amount">금액</label>
+              <input type="number" id="from-amount" value="1" min="0" step="any" />
+            </div>
+          </div>
+
+          <div class="swap-divider">
+            <button id="swap-currencies" class="swap-btn" title="통화 바꾸기">⇅ 통화 바꾸기</button>
+            <span id="unit-rate-info" class="unit-rate-info">1 USD = 1,380.00 KRW</span>
+          </div>
+
+          <div class="currency-row">
+            <div class="currency-select-wrap">
+              <label for="to-currency">받는 통화</label>
+              <select id="to-currency"></select>
+            </div>
+            <div class="currency-input-wrap">
+              <label for="to-amount">변환 결과</label>
+              <input type="text" id="to-amount" readonly />
+            </div>
+          </div>
+        </div>
+
+        <!-- 주요 통화 환율 한눈에 보기 -->
+        <div class="rates-table-container">
+          <div class="rates-table-header">
+            <h3>주요 통화 환율표 (원화 KRW 기준)</h3>
+            <span class="rates-note">클릭하면 변환 통화로 선택됩니다</span>
+          </div>
+          <div id="rates-grid" class="rates-grid">
+            <!-- JS에서 렌더링 -->
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

@@ -1,0 +1,482 @@
+:root {
+  --bg-color: #f4f6fb;
+  --card-bg: #ffffff;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --border-color: #e2e8f0;
+  --display-bg: #f8fafc;
+  --key-num-bg: #f1f5f9;
+  --key-num-hover: #e2e8f0;
+  --key-fn-bg: #e2e8f0;
+  --key-fn-hover: #cbd5e1;
+  --key-op-bg: #eef2ff;
+  --key-op-text: #4f46e5;
+  --key-op-hover: #e0e7ff;
+  --key-eq-bg: #4f46e5;
+  --key-eq-hover: #4338ca;
+  --accent-color: #4f46e5;
+  --accent-soft: #eef2ff;
+  --shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.06), 0 8px 10px -6px rgba(15, 23, 42, 0.04);
+}
+
+[data-theme="dark"] {
+  --bg-color: #0f172a;
+  --card-bg: #1e293b;
+  --text-primary: #f8fafc;
+  --text-secondary: #94a3b8;
+  --border-color: #334155;
+  --display-bg: #0f172a;
+  --key-num-bg: #334155;
+  --key-num-hover: #475569;
+  --key-fn-bg: #475569;
+  --key-fn-hover: #64748b;
+  --key-op-bg: #312e81;
+  --key-op-text: #a5b4fc;
+  --key-op-hover: #3730a3;
+  --key-eq-bg: #6366f1;
+  --key-eq-hover: #4f46e5;
+  --accent-color: #818cf8;
+  --accent-soft: rgba(99, 102, 241, 0.15);
+  --shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.35);
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+  background-color: var(--bg-color);
+  color: var(--text-primary);
+  min-height: 100vh;
+  padding: 24px 16px;
+  transition: background-color 0.25s ease, color 0.25s ease;
+}
+
+.app-container {
+  max-width: 1040px;
+  margin: 0 auto;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.title-group h1 {
+  font-size: 1.65rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.subtitle {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  margin-top: 4px;
+}
+
+.icon-btn {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  width: 42px;
+  height: 42px;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1.15rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s ease;
+}
+
+.icon-btn.sm {
+  width: 32px;
+  height: 32px;
+  font-size: 1rem;
+  border-radius: 8px;
+}
+
+.icon-btn:hover {
+  border-color: var(--accent-color);
+  transform: translateY(-1px);
+}
+
+.main-grid {
+  display: grid;
+  grid-template-columns: 380px 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+@media (max-width: 860px) {
+  .main-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.card {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 20px;
+  padding: 22px;
+  box-shadow: var(--shadow);
+}
+
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.section-header h2 {
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+.small-action-btn {
+  background: var(--accent-soft);
+  color: var(--accent-color);
+  border: none;
+  border-radius: 8px;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s;
+}
+
+.small-action-btn:hover {
+  opacity: 0.85;
+}
+
+/* 계산기 영역 */
+.calc-display {
+  background: var(--display-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  padding: 16px 18px;
+  text-align: right;
+  margin-bottom: 16px;
+  min-height: 92px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  word-break: break-all;
+}
+
+.calc-expression {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  min-height: 20px;
+}
+
+.calc-result {
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+
+.calc-keypad {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  margin-bottom: 18px;
+}
+
+.key-btn {
+  height: 54px;
+  border: none;
+  border-radius: 12px;
+  font-size: 1.15rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.12s, transform 0.08s;
+  user-select: none;
+}
+
+.key-btn:active {
+  transform: scale(0.96);
+}
+
+.num-key {
+  background: var(--key-num-bg);
+  color: var(--text-primary);
+}
+
+.num-key:hover {
+  background: var(--key-num-hover);
+}
+
+.fn-key {
+  background: var(--key-fn-bg);
+  color: var(--text-primary);
+}
+
+.fn-key:hover {
+  background: var(--key-fn-hover);
+}
+
+.op-key {
+  background: var(--key-op-bg);
+  color: var(--key-op-text);
+  font-size: 1.3rem;
+}
+
+.op-key:hover {
+  background: var(--key-op-hover);
+}
+
+.eq-key {
+  background: var(--key-eq-bg);
+  color: #ffffff;
+  font-size: 1.3rem;
+}
+
+.eq-key:hover {
+  background: var(--key-eq-hover);
+}
+
+/* 계산 기록 */
+.calc-history {
+  border-top: 1px solid var(--border-color);
+  padding-top: 14px;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+  margin-bottom: 8px;
+}
+
+.text-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  cursor: pointer;
+}
+
+.text-btn:hover {
+  color: var(--accent-color);
+  text-decoration: underline;
+}
+
+.history-list {
+  list-style: none;
+  max-height: 130px;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 6px 10px;
+  border-radius: 8px;
+  background: var(--display-bg);
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: background-color 0.15s;
+}
+
+.history-item:hover {
+  background: var(--key-num-hover);
+}
+
+.history-item .expr {
+  color: var(--text-secondary);
+}
+
+.history-item .res {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.empty-history {
+  font-size: 0.83rem;
+  color: var(--text-secondary);
+  text-align: center;
+  padding: 12px 0;
+}
+
+/* 환율 섹션 */
+.rate-status {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.status-badge {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+  background: var(--display-bg);
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+}
+
+.converter-box {
+  background: var(--display-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 16px;
+  padding: 18px;
+  margin-bottom: 22px;
+}
+
+.currency-row {
+  display: grid;
+  grid-template-columns: 1.1fr 1.2fr;
+  gap: 12px;
+}
+
+@media (max-width: 520px) {
+  .currency-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+.currency-select-wrap label,
+.currency-input-wrap label {
+  display: block;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin-bottom: 6px;
+}
+
+.currency-select-wrap select,
+.currency-input-wrap input {
+  width: 100%;
+  height: 46px;
+  padding: 0 12px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  background: var(--card-bg);
+  color: var(--text-primary);
+  font-size: 1rem;
+  font-weight: 600;
+  outline: none;
+  transition: border-color 0.15s;
+}
+
+.currency-input-wrap input {
+  text-align: right;
+}
+
+.currency-select-wrap select:focus,
+.currency-input-wrap input:focus {
+  border-color: var(--accent-color);
+}
+
+.swap-divider {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 14px 0;
+}
+
+.swap-btn {
+  background: var(--card-bg);
+  border: 1px solid var(--border-color);
+  color: var(--text-primary);
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.swap-btn:hover {
+  border-color: var(--accent-color);
+  color: var(--accent-color);
+}
+
+.unit-rate-info {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--accent-color);
+}
+
+/* 주요 통화 환율표 */
+.rates-table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: baseline;
+  margin-bottom: 12px;
+}
+
+.rates-table-header h3 {
+  font-size: 0.98rem;
+  font-weight: 700;
+}
+
+.rates-note {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.rates-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
+  gap: 10px;
+}
+
+.rate-card {
+  background: var(--display-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 12px 14px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.rate-card:hover {
+  border-color: var(--accent-color);
+  transform: translateY(-2px);
+}
+
+.rate-card.active {
+  border-color: var(--accent-color);
+  background: var(--accent-soft);
+}
+
+.rate-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.currency-badge {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  font-size: 0.92rem;
+}
+
+.currency-name {
+  font-size: 0.78rem;
+  color: var(--text-secondary);
+}
+
+.rate-value {
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  text-align: right;
+}
